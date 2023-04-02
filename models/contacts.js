@@ -10,6 +10,7 @@ const getContacts = async () => {
 
 const getContactById = async (contactId) => {
   const contacts = await getContacts();
+  console.log(contacts);
   const result = contacts.find((item) => item.id === contactId);
   if (!result) {
     throw new Error('Not found');
@@ -47,6 +48,8 @@ const updateContact = async (contactId, body) => {
 
   const updatedContact = { ...contacts[index], ...body };
   contacts[index] = updatedContact;
+  console.log(body);
+  console.log(updatedContact);
 
   await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
 
