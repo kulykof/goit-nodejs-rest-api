@@ -20,6 +20,7 @@ const updateContactSchema = Joi.object()
     name: Joi.string(),
     email: Joi.string().email(),
     phone: Joi.string().pattern(/^\+?[0-9 ()-]{3,}$/),
+    favorite: Joi.boolean(),
   })
   .min(1)
   .required()
