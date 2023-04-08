@@ -1,4 +1,3 @@
-// const { boolean } = require("joi");
 const contacts = require("../../models/contacts");
 
 const updateStatusContact = async (req, res) => {
@@ -10,10 +9,10 @@ const updateStatusContact = async (req, res) => {
     }
 
   try {
-    const updatedContact = await contacts.updateStatusContact(contactId, {
+  const {contact} = await contacts.updateStatusContact(contactId, {
       favorite,
     });
-    res.json(updatedContact);
+    res.json(contact);
   } catch (error) {
     res.status(404).json({ message: "Not found" });
   }

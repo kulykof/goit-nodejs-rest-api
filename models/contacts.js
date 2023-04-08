@@ -1,8 +1,4 @@
 const Contact = require("../models/contact");
-// const fs = require('fs/promises');
-// const path = require('path');
-
-// const contactsPath = path.join(__dirname, "contacts.json");
 
 const getContacts = async () => {
   const contacts = await Contact.find({});
@@ -11,9 +7,6 @@ const getContacts = async () => {
 
 const getContactById = async (contactId) => {
   const contact = await Contact.findById(contactId);
-  if (!contact) {
-    throw new Error("Not found");
-  }
   return contact;
 };
 
@@ -35,9 +28,6 @@ const updateContact = async (contactId, body) => {
   const contact = await Contact.findByIdAndUpdate(contactId, body, {
     new: true,
   });
-  if (!contact) {
-    throw new Error("Not found");
-  }
   return contact;
 };
 
