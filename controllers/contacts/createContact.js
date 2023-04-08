@@ -7,10 +7,15 @@ const createContact = async (req, res, next) => {
       email,
       phone,
     };
+  try {
     const contact = await contacts.createContact(newContact);
     if (contact) {
       res.status(201).json(contact);
     }
+  } catch (err) {
+    next(err);
+    }
+
 };
 
 module.exports = { createContact };

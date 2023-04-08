@@ -8,6 +8,7 @@ const contactSchema = new mongoose.Schema(
     },
     email: {
       type: String,
+      unique: true,
     },
     phone: {
       type: String,
@@ -17,7 +18,7 @@ const contactSchema = new mongoose.Schema(
       default: false,
     },
   },
-  { versionKey: false },
+  { versionKey: false }
 );
 
 const Contact = mongoose.model("Contact", contactSchema, "contacts");
