@@ -5,8 +5,8 @@ const getContactById = async (req, res, next) => {
     const contact = await contacts.getContactById(req.params.contactId);
     res.json(contact);
   } catch (err) {
-    console.log(err.message);
-    res.status(404).json({ message: err.message });
+    // console.log(err.message);
+    res.status(404).json({ message: "Not found" });
   }
 };
 

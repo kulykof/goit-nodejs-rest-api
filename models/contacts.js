@@ -1,65 +1,51 @@
-const fs = require('fs/promises');
-const path = require('path');
-
-const contactsPath = path.join(__dirname, 'contacts.json');
+const Contact = require("../models/contact");
 
 const getContacts = async () => {
-  const data = await fs.readFile(contactsPath);
-  return JSON.parse(data);
+  const contacts = await Contact.find({});
+  return contacts;
 };
 
 const getContactById = async (contactId) => {
-  const contacts = await getContacts();
-  console.log(contacts);
-  const result = contacts.find((item) => item.id === contactId);
-  if (!result) {
-    throw new Error('Not found');
-  }
-  return result;
+  const contact = await Contact.findById(contactId);
+  return contact;
 };
 
-const addContact = async (body) => {
-  const contacts = await getContacts();
-
-  contacts.push(body);
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-  return body;
+const createContact = async (body) => {
+  const contact = new Contact(body);
+  await contact.save();
+  return contact;
 };
 
 const removeContact = async (contactId) => {
-  const contacts = await getContacts();
-  const index = contacts.findIndex((item) => item.id === contactId);
-  console.log(index);
-  if (index === -1) {
+  const contact = await Contact.findByIdAndRemove(contactId);
+  if (!contact) {
     throw new Error('Not found');
   }
-  const [result] = contacts.splice(index, 1);
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-  return result;
+  return contact;
 };
 
 const updateContact = async (contactId, body) => {
-  const contacts = await getContacts();
-  const index = contacts.findIndex((item) => item.id === contactId);
+  const contact = await Contact.findByIdAndUpdate(contactId, body, {
+    new: true,
+  });
+  return contact;
+};
 
-  if (index === -1) {
-    throw new Error('Not found');
-  }
+const updateStatusContact = async (contactId, body) => {
+  const updatedContact = await Contact.findByIdAndUpdate(
+    contactId,
+    { favorite: body.favorite },
+    { new: true }
+  );
 
-  const updatedContact = { ...contacts[index], ...body };
-  contacts[index] = updatedContact;
-  console.log(body);
-  console.log(updatedContact);
-
-  await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
-
-  return updatedContact;
+  return { contact: updatedContact, status: 200 };
 };
 
 module.exports = {
   getContacts,
   getContactById,
   removeContact,
-  addContact,
+  createContact,
   updateContact,
+  updateStatusContact,
 };

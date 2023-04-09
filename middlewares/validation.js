@@ -15,7 +15,7 @@ const updateValid = (schema) => {
     const { error } = schema.validate(req.body);
     if (error) {
       return res.status(400).json({
-        message: `missing field`,
+        message: error.details[0].message
       });
     }
     next();
