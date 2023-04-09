@@ -19,7 +19,13 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-  res.status(500).json({ message: err.message })
+  console.log(err.code);
+  if (err.code === 11000) {
+    res.status(409).json({ message: err.message }); 
+  } else {
+    res.status(500).json({ message: err.message });
+  }
+  
 });
 
 module.exports = app
