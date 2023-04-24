@@ -10,6 +10,7 @@ const {
 } = require('../../schemas/users');
 const { users: ctrl } = require('../../controllers');
 const authenticate = require('../../middlewares/authenticate');
+const upload = require('../../middlewares/upload');
 
 const router = express.Router();
 
