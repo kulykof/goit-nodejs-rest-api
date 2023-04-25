@@ -1,32 +1,31 @@
-const fs = require('fs/promises');
 const path = require('path');
-const Jimp = require('jimp');
-
+const fs = require('fs/promises');
 const { User } = require('../../models/user');
+const avatarsDir = path.join(__dirname, '../', '../', 'public', 'avatars');
 
-const avatarsDir = path.join(__dirname, '../../', 'public', 'avatars');
+const resizeImage = require('../../utils/resizeImage/resizeImage');
 
-const updateAvatar = async (req, res) => {
-    const { path: tempUpload, originalname } = req.file;
-    const { _id } = req.user;
+const updateAvatar = async (req, res, next) => {
+    try {
+        const { _id } = req.user;
+        const { path: tempUpload, originalname } = req.file;
+        const filename = `${_id}_${originalname}`;
+        const resultUpload = path.join(avatarsDir, filename);
 
-    const filename = `${_id}_${originalname}`;
-    const resultUpload = path.join(avatarsDir, filename);
-    await fs.rename(tempUpload, resultUpload);
+        const resizeResult = await resizeImage(tempUpload);
+        if (!resizeResult) {
+            throw new Error('Failed to resize image');
+        }
 
-    const avatarURL = path.join('avatars', filename);
-    const minAvatarURL = path.join('public/avatars', filename);
-
-    Jimp.read(minAvatarURL, (error, filename) => {
-        if (error) throw error;
-        filename.resize(250, 250).quality(60).write(minAvatarURL);
-    });
-
-    await User.findByIdAndUpdate(_id, { avatarURL: minAvatarURL });
-
-    res.json({
-        avatarURL,
-    });
+        await fs.rename(tempUpload, resultUpload);
+        const avatarURL = path.join('avatars', filename);
+        await User.findByIdAndUpdate(_id, { avatarURL });
+        res.json({
+            avatarURL,
+        });
+    } catch (error) {
+        next(error);
+    }
 };
 
 module.exports = updateAvatar;

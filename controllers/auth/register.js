@@ -4,6 +4,13 @@ const { Conflict } = require('http-errors');
 const gravatar = require('gravatar');
 const { nanoid } = require('nanoid');
 
+const { sendEmail } = require('../../helpers/');
+
+const BASE_URL = process.env.BASE_URL || 'http://localhost';
+const PORT = process.env.PORT || 3000;
+
+const url = `${BASE_URL}:${PORT}`;
+
 const { User } = require('../../models/user');
 
 const register = async (req, res, next) => {
@@ -15,7 +22,7 @@ const register = async (req, res, next) => {
             throw new Conflict('Email in use');
         }
 
-        const avatarURL = gravatar.url(email); 
+        const avatarURL = gravatar.url(email); //, { protocol: 'https', s: '100',  }
         const hashPassword = await bcrypt.hash(password, 10);
         const verificationToken = nanoid();
         const newUser = await User.create({
@@ -24,6 +31,14 @@ const register = async (req, res, next) => {
             avatarURL,
             verificationToken,
         });
+
+        const verifyEmail = {
+            to: email,
+            subject: 'Verify email',
+            html: `<a target="_blank" href="${url}/users/verify/${verificationToken}">Click to verify your email</a>`,
+        };
+
+        await sendEmail(verifyEmail);
 
         res.status(201).json({
             user: {
