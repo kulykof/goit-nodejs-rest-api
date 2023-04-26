@@ -10,7 +10,7 @@ const {
 const isValidId = require('../../middlewares/isValidId');
 const authenticate = require('../../middlewares/authenticate');
 
-const router = express.Router();
+const router = express();
 
 router.get('/', authenticate, ctrl.listContacts);
 
@@ -19,7 +19,7 @@ router.get('/:contactId', authenticate, isValidId, ctrl.getContactById);
 router.post(
     '/',
     authenticate,
-    validation.addValid(addContactSchema),
+    validation.validate(addContactSchema),
     ctrl.addContact
 );
 
@@ -29,14 +29,14 @@ router.put(
     '/:contactId',
     authenticate,
     isValidId,
-    validation.updateValid(updateContactSchema),
+    validation.validate(updateContactSchema),
     ctrl.updateContact
 );
 
 router.patch(
     '/:contactId/favorite',
     authenticate,
-    validation.updateFavValid(updateStatusContactSchema),
+    validation.validate(updateStatusContactSchema),
     ctrl.updateStatusContact
 );
 
